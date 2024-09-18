@@ -70,7 +70,7 @@ class Cat_MLP_LocalFeatures_DPT_Pts3d(PixelwiseTaskWithDPT):
 
     def forward(self, decout, img_shape):
         # pass through the heads
-        pts3d = self.dpt(decout, image_size=(img_shape[0], img_shape[1]))
+        pts3d, pts3d_features = self.dpt(decout, image_size=(img_shape[0], img_shape[1]))
 
         # recover encoder and decoder outputs
         enc_output, dec_output = decout[0], decout[-1]
@@ -93,7 +93,7 @@ class Cat_MLP_LocalFeatures_DPT_Pts3d(PixelwiseTaskWithDPT):
                                    desc_mode=self.desc_mode,
                                    two_confs=self.two_confs,
                                    desc_conf_mode=self.desc_conf_mode)
-        return out
+        return out, pts3d_features, torch.mean(local_features,dim=(2,3))
 
 
 def mast3r_head_factory(head_type, output_mode, net, has_conf=False):
